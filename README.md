@@ -1,0 +1,2 @@
+# WPSR
+Battery friendly watchface
