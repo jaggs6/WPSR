@@ -7,7 +7,9 @@ static Layer *s_canvas;
 
 static GRect bounds;
 static int minute;
+static int pmin;
 static int hour;
+static int phour;
 
 static int digit_to_int(char ch)
 {
@@ -25,34 +27,43 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
   minute = digit_to_int(s_time_text[textlen - 1]);
   hour = (digit_to_int(s_time_text[textlen - 5]) * 10) + digit_to_int(s_time_text[textlen - 4]);
   
-  // hour = (digit_to_int(s_time_text[textlen - 2])*10 + minute) % 24;
-  
-  // APP_LOG(APP_LOG_LEVEL_DEBUG, "hour %d", hour);
-  
-  
-  if(hour > 1 && hour < 9)
-  { 
-    text_layer_set_text(s_time_mode, "Sleep");
-    s_time_text[textlen - 1] = 0;
-    s_time_text[textlen - 2] = 0;
-    s_time_text[textlen - 3] = 0;
-    s_time_layer = text_layer_create(GRect(30, 54, bounds.size.w, 114));
-  }
-  else if (hour == 9)
+  if(pmin != minute)
   {
-    text_layer_set_text(s_time_mode, "Repeat");
+    pmin = minute;
+    // hour = (digit_to_int(s_time_text[textlen - 2])*10 + minute) % 24;
+    
+    // APP_LOG(APP_LOG_LEVEL_DEBUG, "hour %d", hour);
+    
+    if(hour > 1 && hour < 9)
+    { 
+      if(phour != hour)
+      {
+        text_layer_set_text(s_time_mode, "Sleep");
+        s_time_text[textlen - 1] = 0;
+        s_time_text[textlen - 2] = 0;
+        s_time_text[textlen - 3] = 0;
+        s_time_layer = text_layer_create(GRect(30, 54, bounds.size.w, 114));
+        text_layer_set_text(s_time_layer, s_time_text);
+        phour = hour;
+      }
+    }
+    else if (hour == 9)
+    {
+      text_layer_set_text(s_time_mode, "Repeat");
+      text_layer_set_text(s_time_layer, s_time_text);
+    }
+    else if (hour >= 10 && hour < 18)
+    {
+      text_layer_set_text(s_time_mode, "Work");
+      text_layer_set_text(s_time_layer, s_time_text);
+    }
+    else
+    {
+      text_layer_set_text(s_time_mode, "Play");
+      s_time_text[textlen - 1] = 0;
+      text_layer_set_text(s_time_layer, s_time_text);
+    }
   }
-  else if (hour >= 10 && hour < 18)
-  {
-    text_layer_set_text(s_time_mode, "Work");
-  }
-  else
-  {
-    text_layer_set_text(s_time_mode, "Play");
-    s_time_text[textlen - 1] = 0;
-  }
-  
-  text_layer_set_text(s_time_layer, s_time_text);
 }
 
 static void layer_update_proc(Layer *layer, GContext *ctx) {
@@ -79,6 +90,8 @@ static void layer_update_proc(Layer *layer, GContext *ctx) {
 }
 
 static void main_window_load(Window *window) {
+  pmin = -1;
+  phour = -1;
   Layer *window_layer = window_get_root_layer(window);
   bounds = layer_get_bounds(window_layer);
   
