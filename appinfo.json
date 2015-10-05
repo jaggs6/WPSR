@@ -1,0 +1,22 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Jaggs.net",
+    "longName": "Work Play Repeat",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "WPSR",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "c767145d-de62-46fe-b78e-3ee84ed87066",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
